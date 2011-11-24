@@ -6,7 +6,7 @@ using System.Data.Odbc;
 
 namespace WordsssDB
 {
-    class WordsssDBManager
+    public class WordsssDBManager
     {
         string strConn = "Driver={MySQL ODBC 5.1 Driver};Server=localhost;Database=word;User=root;Password=ohluyaomysql";
         OdbcConnection myConnection;
@@ -41,8 +41,8 @@ namespace WordsssDB
             string addWord = String.Format("insert into word values({0},'{1}')",word_id,word_name);
             myCommand = new OdbcCommand(addWord, myConnection);
             if(myCommand.ExecuteNonQuery() == 1)
-                return -1;
-            return word_id;
+                return word_id;
+            return -1;
         }
 
         public bool deleteWord(int word_id)
@@ -175,7 +175,7 @@ namespace WordsssDB
             reader = myCommand.ExecuteReader();
             if (reader.Read())
             {
-                string deleteParaphase = String.Format("delete from {0} where word_dict_id = {1}", word_name, word_dict_id);
+                string deleteParaphase = String.Format("delete from word_dict where word_dict_id = {0}", word_dict_id);
                 myCommand = new OdbcCommand(deleteParaphase, myConnection);
                 myCommand.ExecuteNonQuery();
                 return -1;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Data.Odbc;
+using System.IO;
 
 namespace WordsssDB
 {
@@ -35,7 +36,7 @@ namespace WordsssDB
             //string word_paraphase = Console.ReadLine();
             //dbManager.addParaphase(word_name, 0, word_paraphase);
 
-            dbManager.updateParaphase(1,0,"update关于"); 
+            /*dbManager.updateParaphase(1,0,"update关于"); 
 
             var paraphaseList = dbManager.getParaphase("about", 0);
             foreach (string paraphase in paraphaseList)
@@ -49,7 +50,9 @@ namespace WordsssDB
             foreach (string paraphase in paraphaseList2)
             {
                 Console.WriteLine(paraphase);
-            }
+            }*/
+
+            
             dbManager.CloseManager();
         }
     }
