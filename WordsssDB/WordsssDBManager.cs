@@ -16,6 +16,7 @@ namespace WordsssDB
             switch( dict_type)
             {
                 case 0: return "test_dic";
+                case 1: return "oxford_dict";
                 default: return "null";
             }
         }

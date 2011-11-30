@@ -52,6 +52,17 @@ namespace WordsssDB
                 Console.WriteLine(paraphase);
             }*/
 
+            StreamReader reader = new StreamReader("oxford.txt",Encoding.GetEncoding("gb2312"));
+            while (!reader.EndOfStream)
+            {
+                string s = reader.ReadLine();
+                string[] split = s.Split(new char[] { ' ' }, 2);
+                string word_name = split[0];
+                string paraphase = split[1];
+                dbManager.addParaphase(word_name, 1, paraphase);
+                Console.WriteLine("{0} {1}", word_name, paraphase);
+            }
+            
             
             dbManager.CloseManager();
         }

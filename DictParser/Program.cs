@@ -14,15 +14,17 @@ namespace DictParser
             WordsssDBManager myDbManager = new WordsssDBManager();
             var result = myDbManager.getAllWord();
 
-            StreamReader reader = new StreamReader("test.txt");
+            StreamReader reader = new StreamReader("oxford.txt");
             while (!reader.EndOfStream)
             {
-                string s1 = reader.ReadLine();
-                string paraphase = reader.ReadLine();
-                string word_name = s1.Split(' ')[1];
-                myDbManager.addParaphase(word_name, 0, paraphase);
+                string s = reader.ReadLine();
+                string[] split = s.Split(new char[]{' '},2);
+                string word_name = split[0];
+                string paraphase = split[1];
+                myDbManager.addParaphase(word_name, 1, paraphase);
+                Console.WriteLine("{0} {1}", word_name, paraphase);
             }
- 
+            
             foreach (var word in result)
             {
                 Console.WriteLine(word);
