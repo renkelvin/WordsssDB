@@ -59,7 +59,7 @@ namespace WordsssDB
                 string[] split = s.Split(new char[] { ' ' }, 2);
                 string word_name = split[0];
                 string paraphase = split[1];
-                dbManager.addParaphase(word_name, 1, paraphase);
+               // dbManager.addParaphase(word_name, 1, paraphase);
                 Console.WriteLine("{0} {1}", word_name, paraphase);
             }
             

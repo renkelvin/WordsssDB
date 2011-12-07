@@ -5,6 +5,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordsssDB", "WordsssDB\Word
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DictParser", "DictParser\DictParser.csproj", "{0C5DEF55-6EC6-4C16-A0A4-EB9C5CEB7F6F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dict2Parser", "Dict2Parser\Dict2Parser.csproj", "{8BA98439-A6AD-4A58-9B83-F062DE9DFE8C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{904EF088-ECC9-4AF0-B08E-4BD290BB5AC7} = {904EF088-ECC9-4AF0-B08E-4BD290BB5AC7}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -19,6 +24,10 @@ Global
 		{0C5DEF55-6EC6-4C16-A0A4-EB9C5CEB7F6F}.Debug|x86.Build.0 = Debug|x86
 		{0C5DEF55-6EC6-4C16-A0A4-EB9C5CEB7F6F}.Release|x86.ActiveCfg = Release|x86
 		{0C5DEF55-6EC6-4C16-A0A4-EB9C5CEB7F6F}.Release|x86.Build.0 = Release|x86
+		{8BA98439-A6AD-4A58-9B83-F062DE9DFE8C}.Debug|x86.ActiveCfg = Debug|x86
+		{8BA98439-A6AD-4A58-9B83-F062DE9DFE8C}.Debug|x86.Build.0 = Debug|x86
+		{8BA98439-A6AD-4A58-9B83-F062DE9DFE8C}.Release|x86.ActiveCfg = Release|x86
+		{8BA98439-A6AD-4A58-9B83-F062DE9DFE8C}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
