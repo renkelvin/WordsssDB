@@ -106,7 +106,7 @@ namespace WordsssDB
             return resultList;
         }
 
-        private int addWordDictParaphase(int word_id, int dict_type, string word_type)
+        private int addWordDictParaphase(int word_id, string insertColumn, int dict_id)
         {
             // GET MAX WORD_DICT_ID TO INSERT NEW ROW
             string queryMaxId = String.Format("select max(word_dict_id) from word_dict");
@@ -122,7 +122,7 @@ namespace WordsssDB
                 word_dict_id = reader.GetInt32(0) + 1;
 
             // INSERT TNTO WORD_DICT A NEW ROW
-            string insertParaphase = String.Format("insert into word_dict values({0},{1},{2})",word_dict_id,word_id,dict_type);
+            string insertParaphase = String.Format("insert into word_dict (word_dict_id,word_id,{3})values({0},{1},{2})",word_dict_id,word_id,dict_id,insertColumn);
             myCommand = new OdbcCommand(insertParaphase,myConnection);
             try
             {
@@ -132,7 +132,8 @@ namespace WordsssDB
                 }
             }
             catch (OdbcException e)
-            { 
+            {
+                Console.WriteLine("insert into word_dict error");
             }
             return -1;
         }
@@ -153,9 +154,10 @@ namespace WordsssDB
             return word_dict_idList;
         }
 
-        public int addParaphase(string word_name, int dict_type, string word_paraphase, string word_type)
+        public int addParaphase(string dict_name, string word_name,string word_paraphase, string word_type)
         {
-            string dict_name = getDictName(dict_type);
+            if (dict_name == null)
+                return -1;
             // CHECK IF WORD EXIST
             // IF EXIST GET WORD_ID
             // ELSE GET WORD_ID BY addWord()
@@ -163,8 +165,9 @@ namespace WordsssDB
             if (word_id == -1)
                 word_id = addWord(word_name);
 
+            if(word_id == -1)
+                return -1;
             // ADD Paraphase IN WORD_DICT GET WORD_DICT_ID
-            int word_dict_id = addWordDictParaphase(word_id,0,word_type);
             int dict_id = -1;
             string queryDict = String.Format("select max(dict_id) from {0}",dict_name);
             OdbcCommand myCommand = new OdbcCommand(queryDict, myConnection);
@@ -185,31 +188,46 @@ namespace WordsssDB
                 reader = myCommand.ExecuteReader();
                 if (reader.Read())
                 {
-                    string deleteParaphase = String.Format("delete from word_dict where word_dict_id = {0}", word_dict_id);
-                    myCommand = new OdbcCommand(deleteParaphase, myConnection);
-                    myCommand.ExecuteNonQuery();
                     return -1;
                 }
             }
             catch (OdbcException e)
-            { }
+            {
+ 
+            }
             // INSET NEW PARAPHASE INTO SPECIFIED DICT
             if (word_type == null)
                 word_type = "";
-            string insertParaphase = String.Format("insert into {0} values({1},{2},'{3}','{4}')",dict_name,dict_id,word_dict_id,word_paraphase, word_type);
+            string insertParaphase = String.Format("insert into {0} values({1},'{2}','{3}')",dict_name,dict_id,word_paraphase, word_type);
             myCommand = new OdbcCommand(insertParaphase, myConnection);
             try
             {
-                if (myCommand.ExecuteNonQuery() == 1)
+                if (myCommand.ExecuteNonQuery() != 1)
                 {
-                    return dict_id;
+                    return -1 ;
                 }
             }
             catch (OdbcException e)
-            { 
+            {
+                Console.WriteLine("insert into {0} error", dict_name);
+                Console.WriteLine(e.Message);
+                return -1;
+               
             }
-
-            return -1;
+            if (addWordDictParaphase(word_id, dict_name + "_id", dict_id) == -1)
+            {
+                try
+                {
+                    string rollback = String.Format("delete from {0} where dict_id = {1}", dict_name, dict_id);
+                    myCommand = new OdbcCommand(rollback);
+                    myCommand.ExecuteNonQuery();
+                }
+                catch (OdbcException e)
+                { }
+                Console.WriteLine("please delete dict_id = {0} records from {1}", dict_id, dict_name);
+            
+                }
+            return dict_id;
         }
 
         public IEnumerable<string> getParaphase(string word_name, int dict_type)
