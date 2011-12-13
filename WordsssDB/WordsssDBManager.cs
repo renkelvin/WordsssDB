@@ -42,10 +42,19 @@ namespace WordsssDB
 
             string addWord = String.Format("insert into word values({0},'{1}')",word_id,word_name);
             myCommand = new OdbcCommand(addWord, myConnection);
-            if(myCommand.ExecuteNonQuery() == 1)
-                return word_id;
-            return -1;
-        }
+            try
+            {
+                if (myCommand.ExecuteNonQuery() == 1)
+                    return word_id;
+                else
+                    return -1;
+            }
+            catch (OdbcException e)
+            {
+                //throw (e);
+                return -1;
+            }
+       }
 
         public bool deleteWord(int word_id)
         {
@@ -83,12 +92,20 @@ namespace WordsssDB
         {
             string queryWord = String.Format("select word_id from word where word_name = '{0}'",word_name);
             OdbcCommand myCommand = new OdbcCommand(queryWord, myConnection);
-            OdbcDataReader reader = myCommand.ExecuteReader();
-            if (!reader.Read())
+            try
             {
+                OdbcDataReader reader = myCommand.ExecuteReader();
+                if (!reader.Read())
+                {
+                    return -1;
+                }
+                return reader.GetInt32(0);
+            }
+            catch (OdbcException e)
+            {
+                Console.WriteLine("get word_id error!");
                 return -1;
             }
-            return reader.GetInt32(0);
         }
         
         public IEnumerable<string> getAllWord()
@@ -133,6 +150,7 @@ namespace WordsssDB
             }
             catch (OdbcException e)
             {
+                //throw (e);
                 Console.WriteLine("insert into word_dict error");
             }
             return -1;
@@ -181,7 +199,7 @@ namespace WordsssDB
                 dict_id = reader.GetInt32(0) + 1;
 
             // CHECK IF PARAPHASE TO BE INSERTED IS EXIST
-            string queryParaphase = String.Format("select dict_id from {0} where dict_paraphase = '{1}'",dict_name,word_paraphase);
+            string queryParaphase = String.Format("select dict_id from {0} where meaning_en = '{1}'",dict_name,word_paraphase);
             myCommand = new OdbcCommand(queryParaphase, myConnection);
             try
             {
@@ -193,12 +211,12 @@ namespace WordsssDB
             }
             catch (OdbcException e)
             {
- 
+                //throw (e);
             }
             // INSET NEW PARAPHASE INTO SPECIFIED DICT
             if (word_type == null)
                 word_type = "";
-            string insertParaphase = String.Format("insert into {0} values({1},'{2}','{3}')",dict_name,dict_id,word_paraphase, word_type);
+            string insertParaphase = String.Format("insert into {0} values({1},'{2}')",dict_name,dict_id,word_paraphase);
             myCommand = new OdbcCommand(insertParaphase, myConnection);
             try
             {
@@ -209,6 +227,7 @@ namespace WordsssDB
             }
             catch (OdbcException e)
             {
+                //throw (e);
                 Console.WriteLine("insert into {0} error", dict_name);
                 Console.WriteLine(e.Message);
                 return -1;
@@ -223,7 +242,7 @@ namespace WordsssDB
                     myCommand.ExecuteNonQuery();
                 }
                 catch (OdbcException e)
-                { }
+                { throw e; }
                 Console.WriteLine("please delete dict_id = {0} records from {1}", dict_id, dict_name);
             
                 }
