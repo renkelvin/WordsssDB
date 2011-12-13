@@ -11,8 +11,8 @@ namespace Dict2Parser
     {
         static void Main(string[] args)
         {
-            int MAX_WORD_COUNT = 2000;
-            int BEGIN_WORD = 12543;//未添加
+            int MAX_WORD_COUNT = 50000;
+            int BEGIN_WORD = 107570;//未更新
             XmlDocument doc = new XmlDocument();
             doc.Load("1#900.da3");
 
@@ -47,8 +47,8 @@ namespace Dict2Parser
                     {
                         word_paraphase = jx.FirstChild.Value;
                         word_paraphase = word_paraphase.Replace("'", "''");
-                        manager.addParaphase(word_name, 2, word_paraphase, word_type);
-                        Console.WriteLine(i);
+                        Console.Write(manager.addParaphase("mcec_dict", word_name, word_paraphase, word_type));
+                        Console.WriteLine("  " + i);
                     }
                 }
                 //writer.WriteLine(doc.ChildNodes[1].FirstChild.SelectSingleNode("//JX").FirstChild.Value);
