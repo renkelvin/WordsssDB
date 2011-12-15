@@ -8,7 +8,7 @@ namespace WordsssDB
 {
     public class WordsssDBManager
     {
-        string strConn = "Driver={MySQL ODBC 5.1 Driver};Server=localhost;Database=word;User=root;Password=ohluyaomysql";
+        string strConn = "Driver={MySQL ODBC 5.1 Driver};Server=localhost;Database=word_test;User=root;Password=ohluyaomysql";
         OdbcConnection myConnection;
 
         private string getDictName(int dict_type)
@@ -90,7 +90,7 @@ namespace WordsssDB
 
         private int getWordId(string word_name)
         {
-            string queryWord = String.Format("select word_id from word where word_name = '{0}'",word_name);
+            string queryWord = String.Format("select word_id from word where binary word_name = '{0}'",word_name);
             OdbcCommand myCommand = new OdbcCommand(queryWord, myConnection);
             try
             {
@@ -104,8 +104,45 @@ namespace WordsssDB
             catch (OdbcException e)
             {
                 Console.WriteLine("get word_id error!");
+                Console.WriteLine(e.Message);
                 return -1;
             }
+        }
+
+        private int getInsertId(string table_name)
+        {
+            string strQuery = String.Format("select max({0}_id) from {0}",table_name);
+            OdbcCommand command = new OdbcCommand(strQuery, myConnection);
+            OdbcDataReader reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                return reader.GetInt32(0) + 1;
+            }
+            else
+            {
+                return 1;
+            }
+        }
+
+        private int getInsertDictWordId(string dict_name,int word_id)
+        {
+            string strQuery = String.Format("select {0}_word_id from word_dict where word_id = {1}", dict_name, word_id);
+            OdbcCommand command = new OdbcCommand(strQuery, myConnection);
+            OdbcDataReader reader = command.ExecuteReader();
+            int dict_word_id;
+            if (reader.Read())
+            {
+                dict_word_id = reader.GetInt32(0);
+            }
+            else 
+            {
+                dict_word_id = addDictWord(dict_name);
+                if (addWordDictParaphase(word_id, dict_name + "_word_id", dict_word_id) == -1)
+                {
+                    return -1; 
+                }
+            }
+            return dict_word_id;
         }
         
         public IEnumerable<string> getAllWord()
@@ -172,6 +209,29 @@ namespace WordsssDB
             return word_dict_idList;
         }
 
+        private int addDictWord(string dict_name)
+        {
+            string strQury = String.Format("select max({0}_word_id) from {0}_word", dict_name);
+            OdbcCommand command = new OdbcCommand(strQury, myConnection);
+            OdbcDataReader reader = command.ExecuteReader();
+            if (!reader.Read())
+            {
+                return -1;
+            }
+            int dict_word_id = reader.GetInt32(0);
+
+            string strInsert = String.Format("insert into {0}_word values({1})", dict_name, dict_word_id + 1);
+            command = new OdbcCommand(strInsert, myConnection);
+            if (command.ExecuteNonQuery() == 0)
+            {
+                return -1;
+            }
+            return dict_word_id + 1;
+        }
+
+
+        // PARAPHASE OPERATION
+
         public int addParaphase(string dict_name, string word_name,string word_paraphase, string word_type)
         {
             if (dict_name == null)
@@ -185,38 +245,51 @@ namespace WordsssDB
 
             if(word_id == -1)
                 return -1;
-            // ADD Paraphase IN WORD_DICT GET WORD_DICT_ID
-            int dict_id = -1;
-            string queryDict = String.Format("select max(dict_id) from {0}",dict_name);
-            OdbcCommand myCommand = new OdbcCommand(queryDict, myConnection);
-            OdbcDataReader reader = myCommand.ExecuteReader();
-            reader.Read();
-            if (reader.IsDBNull(0))
-            {
-                dict_id = 1;
-            }
-            else
-                dict_id = reader.GetInt32(0) + 1;
+
+
+            // ADD Paraphase IN DICT_WORD GET DICT_WORD_ID
+            int dict_word_id = getInsertDictWordId(dict_name, word_id);
+            if (dict_word_id == -1)
+                return -1;
 
             // CHECK IF PARAPHASE TO BE INSERTED IS EXIST
-            string queryParaphase = String.Format("select dict_id from {0} where meaning_en = '{1}'",dict_name,word_paraphase);
-            myCommand = new OdbcCommand(queryParaphase, myConnection);
+            string queryParaphase = String.Format("select {0}_meaning_id from {0}_meaning where meaning_cn = '{1}'",dict_name,word_paraphase);
+            OdbcCommand myCommand = new OdbcCommand(queryParaphase, myConnection);
+            OdbcDataReader reader = null; 
             try
             {
                 reader = myCommand.ExecuteReader();
                 if (reader.Read())
                 {
-                    return -1;
+                    // UPDATE DICT_MEANING.DICT_WORD_ID IF MEANING EXIST
+                    int dict_meaning_id = reader.GetInt32(0);
+                    string updateMeaning = String.Format("update {0}_meaning set {0}_word_id = {1} where {0}_meaning_id = {2}"
+                                                        , dict_name, dict_word_id, dict_meaning_id);
+                    myCommand = new OdbcCommand(updateMeaning, myConnection);
+                    if (myCommand.ExecuteNonQuery() == 0)
+                    {
+                        return -1;
+                    }
+                    else 
+                    {
+                        return dict_meaning_id;
+                    }
                 }
             }
             catch (OdbcException e)
             {
                 //throw (e);
             }
+
+
             // INSET NEW PARAPHASE INTO SPECIFIED DICT
             if (word_type == null)
                 word_type = "";
-            string insertParaphase = String.Format("insert into {0} values({1},'{2}')",dict_name,dict_id,word_paraphase);
+
+            int new_dict_meaning_id = getInsertId(dict_name + "_meaning");
+
+            string insertParaphase = String.Format("insert into {0}_meaning values({1},'{2}','{3}',{4})"
+                                                    ,dict_name,new_dict_meaning_id,word_paraphase,word_type,dict_word_id);
             myCommand = new OdbcCommand(insertParaphase, myConnection);
             try
             {
@@ -233,20 +306,7 @@ namespace WordsssDB
                 return -1;
                
             }
-            if (addWordDictParaphase(word_id, dict_name + "_id", dict_id) == -1)
-            {
-                try
-                {
-                    string rollback = String.Format("delete from {0} where dict_id = {1}", dict_name, dict_id);
-                    myCommand = new OdbcCommand(rollback);
-                    myCommand.ExecuteNonQuery();
-                }
-                catch (OdbcException e)
-                { throw e; }
-                Console.WriteLine("please delete dict_id = {0} records from {1}", dict_id, dict_name);
-            
-                }
-            return dict_id;
+            return new_dict_meaning_id;
         }
 
         public IEnumerable<string> getParaphase(string word_name, int dict_type)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using WordsssDB;
+using System.IO;
 
 namespace Dict2Parser
 {
@@ -11,10 +12,12 @@ namespace Dict2Parser
     {
         static void Main(string[] args)
         {
-            int MAX_WORD_COUNT = 50000;
-            int BEGIN_WORD = 107570;//未更新
+            int MAX_WORD_COUNT = 140000;
+            int BEGIN_WORD = 123472;//未更新
             XmlDocument doc = new XmlDocument();
             doc.Load("1#900.da3");
+            FileStream fs = new FileStream("mcec_dict.txt", FileMode.Append);
+            StreamWriter writer = new StreamWriter(fs);
 
             WordsssDBManager manager = new WordsssDBManager();
 
@@ -41,18 +44,22 @@ namespace Dict2Parser
                     word_type = "";
                 
                 XmlNodeList jxNodes = ckNode.SelectNodes("JS/CY/CX/JX");
+                writer.WriteLine(word_name);
                 if (jxNodes != null)
                 {
                     foreach (XmlNode jx in jxNodes)
                     {
                         word_paraphase = jx.FirstChild.Value;
                         word_paraphase = word_paraphase.Replace("'", "''");
-                        Console.Write(manager.addParaphase("mcec_dict", word_name, word_paraphase, word_type));
-                        Console.WriteLine("  " + i);
+                        if(manager.addParaphase("mcec_dict", word_name, word_paraphase, word_type)==-1)
+                            writer.WriteLine(i + "==\n" + word_paraphase);
+                        if( i % 1000 == 0)
+                            Console.WriteLine("  " + i);
                     }
                 }
                 //writer.WriteLine(doc.ChildNodes[1].FirstChild.SelectSingleNode("//JX").FirstChild.Value);
             }
+            writer.Close();
         }
     }
 }
