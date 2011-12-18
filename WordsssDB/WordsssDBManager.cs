@@ -367,5 +367,56 @@ namespace WordsssDB
                 return true;
             return false;
         }
+
+
+        //SENSE OPERATION
+        public int addSense(string sense_name, int parent_id = 0)
+        {
+            int senseId = getInsertId("sense");
+            string strInsert = String.Format("insert into sense (sense_id,meaning_cn) values({0},'{1}')",senseId,sense_name);
+            OdbcCommand command = new OdbcCommand(strInsert, myConnection);
+            if (command.ExecuteNonQuery() == 0)
+            {
+                return -1;
+            }
+
+            if (parent_id == 0)
+            {
+                return senseId;
+            }
+            
+            int senseFamilyId = getInsertId("sense_family");
+            string insertFamily = String.Format("insert into sense_family values({0},{1},{2})", senseFamilyId, parent_id, senseId);
+            command = new OdbcCommand(insertFamily, myConnection);
+            if (command.ExecuteNonQuery() == 0)
+            {
+                return -1;
+            }
+
+            return senseId;
+        }
+
+        public int addWordSense(string word_name, int sense_id, string word_meaning)
+        {
+            int word_id = getWordId(word_name);
+            if (word_id == -1)
+            {
+                word_id = addWord(word_name);
+            }
+            if (word_id == -1)
+            {
+                return -1;
+            }
+
+            int word_sense_id = getInsertId("word_sense");
+            string insertWordSense = String.Format("insert into word_sense values({0},{1},{2},'{3}')"
+                                                    ,word_sense_id,word_id,sense_id,word_meaning);
+            OdbcCommand command = new OdbcCommand(insertWordSense, myConnection);
+            if (command.ExecuteNonQuery() == 0)
+            {
+                return -1;
+            }
+            return word_sense_id;
+        }
     }
 }

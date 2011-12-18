@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeiDictParser", "WeiDictPar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeTable", "ChangeTable\ChangeTable.csproj", "{AAEBEDC4-213D-4D44-B3B4-70FDA0769D97}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SenseParser", "SenseParser\SenseParser.csproj", "{B6E0C088-0585-4001-B38B-8594AB01E25E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -43,6 +45,10 @@ Global
 		{AAEBEDC4-213D-4D44-B3B4-70FDA0769D97}.Debug|x86.Build.0 = Debug|x86
 		{AAEBEDC4-213D-4D44-B3B4-70FDA0769D97}.Release|x86.ActiveCfg = Release|x86
 		{AAEBEDC4-213D-4D44-B3B4-70FDA0769D97}.Release|x86.Build.0 = Release|x86
+		{B6E0C088-0585-4001-B38B-8594AB01E25E}.Debug|x86.ActiveCfg = Debug|x86
+		{B6E0C088-0585-4001-B38B-8594AB01E25E}.Debug|x86.Build.0 = Debug|x86
+		{B6E0C088-0585-4001-B38B-8594AB01E25E}.Release|x86.ActiveCfg = Release|x86
+		{B6E0C088-0585-4001-B38B-8594AB01E25E}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
