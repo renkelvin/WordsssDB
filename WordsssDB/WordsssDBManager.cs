@@ -8,7 +8,7 @@ namespace WordsssDB
 {
     public class WordsssDBManager
     {
-        string strConn = "Driver={MySQL ODBC 5.1 Driver};Server=localhost;Database=word_test;User=root;Password=ohluyaomysql";
+        string strConn = "Driver={MySQL ODBC 5.1 Driver};Server=localhost;Database=word;User=root;Password=ohluyaomysql";
         OdbcConnection myConnection;
 
         private string getDictName(int dict_type)
@@ -114,7 +114,9 @@ namespace WordsssDB
             string strQuery = String.Format("select max({0}_id) from {0}",table_name);
             OdbcCommand command = new OdbcCommand(strQuery, myConnection);
             OdbcDataReader reader = command.ExecuteReader();
-            if (reader.Read())
+            reader.Read();
+
+            if (!reader.IsDBNull(0))
             {
                 return reader.GetInt32(0) + 1;
             }
@@ -417,6 +419,31 @@ namespace WordsssDB
                 return -1;
             }
             return word_sense_id;
+        }
+
+        //FREQUENCY OPERATION
+        public int addFrequency(string word_name, int frequency, int frequency2, double frequency3)
+        {
+            int word_id = getWordId(word_name);
+            if (word_id == -1)
+            {
+                word_id = addWord(word_name);
+            }
+            if (word_id == -1)
+            {
+                Console.WriteLine("add word failed");
+                return -1;
+            }
+
+            int frequency_id = getInsertId("frequency");
+            string strInsertFreq = String.Format("insert into frequency values({0},{1},{2},{3},{4})",
+                                                  frequency_id, frequency,word_id, frequency2, frequency3);
+            OdbcCommand command = new OdbcCommand(strInsertFreq, myConnection);
+            if (command.ExecuteNonQuery() == 0)
+            {
+                return -1;
+            }
+            return frequency_id;
         }
     }
 }

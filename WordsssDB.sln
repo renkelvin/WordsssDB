@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeTable", "ChangeTable\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SenseParser", "SenseParser\SenseParser.csproj", "{B6E0C088-0585-4001-B38B-8594AB01E25E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrequencyParser", "FrequencyParser\FrequencyParser.csproj", "{F9543CD0-D6EF-46E6-8D6B-F7CCDF4E16F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -49,6 +51,10 @@ Global
 		{B6E0C088-0585-4001-B38B-8594AB01E25E}.Debug|x86.Build.0 = Debug|x86
 		{B6E0C088-0585-4001-B38B-8594AB01E25E}.Release|x86.ActiveCfg = Release|x86
 		{B6E0C088-0585-4001-B38B-8594AB01E25E}.Release|x86.Build.0 = Release|x86
+		{F9543CD0-D6EF-46E6-8D6B-F7CCDF4E16F6}.Debug|x86.ActiveCfg = Debug|x86
+		{F9543CD0-D6EF-46E6-8D6B-F7CCDF4E16F6}.Debug|x86.Build.0 = Debug|x86
+		{F9543CD0-D6EF-46E6-8D6B-F7CCDF4E16F6}.Release|x86.ActiveCfg = Release|x86
+		{F9543CD0-D6EF-46E6-8D6B-F7CCDF4E16F6}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
