@@ -10,18 +10,51 @@ namespace Dict2Parser
 {
     class Program
     {
+        public static string processString(string str)
+        {
+            string result = str.Replace("&I{", "");
+            result = result.Replace("}", "");
+            result = result.Replace("&b{","");
+            result = result.Replace("'", "''");
+            result = result.Replace("?", "");
+            return result;
+        }
+
+        public static int getWordType(string wordType)
+        {
+            if (wordType.Contains("名词"))
+                return 1;
+            if (wordType.Contains("动词")&&wordType.Contains("助动词"))
+                return 2;
+            if (wordType.Contains("形容词"))
+                return 3;
+            if (wordType.Contains("副词"))
+                return 4;
+            if (wordType.Contains("介词"))
+                return 5;
+            if (wordType.Contains("连接词"))
+                return 6;
+            if (wordType.Contains("及物动词"))
+                return 7;
+            if (wordType.Contains("不及物动词"))
+                return 8;
+            if (wordType.Contains("词组"))
+                return 9;
+            return 0;
+        }
+
         static void Main(string[] args)
         {
-            int MAX_WORD_COUNT = 140000;
-            int BEGIN_WORD = 123472;//未更新
+            int MAX_WORD_COUNT = 100;
+            int BEGIN_WORD = 0;//未更新
             XmlDocument doc = new XmlDocument();
-            doc.Load("1#900.da3");
-            FileStream fs = new FileStream("mcec_dict.txt", FileMode.Append);
+            doc.Load("AHD.xml");
+            FileStream fs = new FileStream("AHD2.txt", FileMode.Create);
             StreamWriter writer = new StreamWriter(fs);
-
             WordsssDBManager manager = new WordsssDBManager();
 
             XmlNode dictNode = doc.ChildNodes[1];
+            Console.WriteLine(dictNode.ChildNodes.Count);
 
             for (int i = BEGIN_WORD; i < (BEGIN_WORD + MAX_WORD_COUNT) && i <dictNode.ChildNodes.Count; i++)
             {
@@ -29,32 +62,70 @@ namespace Dict2Parser
                 string word_paraphase;
                 string word_type;
                 XmlNode ckNode = dictNode.ChildNodes[i];
-                XmlNode dcNode = ckNode.SelectSingleNode("DC");
+                XmlNode dcNode = ckNode.SelectSingleNode("单词");
                 if (dcNode == null)
                     continue;
-                
                 word_name = dcNode.FirstChild.Value;
-                word_name = word_name.Replace("'", "''");
-                XmlNode dxNode = ckNode.SelectSingleNode("JS/CY/CX/DX");
-                if (dxNode != null)
-                {
-                    word_type = dxNode.FirstChild.Value;
-                }
-                else
-                    word_type = "";
-                
-                XmlNodeList jxNodes = ckNode.SelectNodes("JS/CY/CX/JX");
+                word_name = processString(word_name);
                 writer.WriteLine(word_name);
-                if (jxNodes != null)
+                Console.WriteLine(i);
+
+                XmlNodeList jxNodeList = ckNode.SelectNodes("单词解释块");
+                foreach (XmlNode jxNode in jxNodeList)
                 {
-                    foreach (XmlNode jx in jxNodes)
+                    XmlNode dxNode = jxNode.SelectSingleNode("基本词义/单词项/单词词性");
+                    
+                    if (dxNode != null)
                     {
-                        word_paraphase = jx.FirstChild.Value;
-                        word_paraphase = word_paraphase.Replace("'", "''");
-                        if(manager.addParaphase("mcec_dict", word_name, word_paraphase, word_type)==-1)
-                            writer.WriteLine(i + "==\n" + word_paraphase);
-                        if( i % 1000 == 0)
-                            Console.WriteLine("  " + i);
+                        word_type = dxNode.FirstChild.Value;
+                    }
+                    else
+                        word_type = "";
+
+                    XmlNodeList jxNodes = jxNode.SelectNodes("基本词义/单词项/跟随注释");
+                    XmlNode yxNode = jxNode.SelectSingleNode("基本词义/单词项/单词原型");
+                    
+                    if(yxNode != null && yxNode.FirstChild.Value != word_name)
+                        writer.WriteLine(processString(yxNode.FirstChild.Value));
+                    if (jxNodes != null)
+                    {
+                        foreach (XmlNode jx in jxNodes)
+                        {
+                            int dict_meaning_id = -1;
+                            word_paraphase = jx.FirstChild.Value;
+                            if (word_paraphase == " ")
+                                continue;
+                            //if(manager.addParaphase("mcec_dict", word_name, word_paraphase, word_type)==-1)
+                            writer.WriteLine(getWordType(word_type));
+                            string meaning_en = processString(jx.PreviousSibling.FirstChild.Value);
+                            string meaning_cn = processString(word_paraphase);
+                            writer.WriteLine(processString(jx.PreviousSibling.FirstChild.Value));
+                            writer.WriteLine(processString(word_paraphase));
+
+
+                            dict_meaning_id = manager.addParaphase("ahd_dict",word_name,meaning_cn,meaning_en,getWordType(word_type));
+                            if (dict_meaning_id == -1)
+                            {
+                                writer.WriteLine("MEANING_FAILED");
+                                continue;
+                            }
+                            if (i % 1000 == 0)
+                                Console.WriteLine("  " + i);
+                            XmlNode ljNode = jx.NextSibling;
+                            if (ljNode != null && ljNode.Name == "例句")
+                            {
+                                XmlNodeList ljNodeList = ljNode.SelectNodes("例句原型");
+                                foreach (XmlNode lj in ljNodeList)
+                                {
+                                    string sentence_en = processString(lj.FirstChild.Value);
+                                    string sentence_cn = processString(lj.NextSibling.FirstChild.Value);
+                                    if (manager.addDictSentence(dict_meaning_id, sentence_en, sentence_cn) == -1)
+                                        writer.WriteLine("SENTENCE_FAILED");
+                                    writer.WriteLine(processString(lj.FirstChild.Value));
+                                    writer.WriteLine(processString(lj.NextSibling.FirstChild.Value));
+                                }
+                            }
+                        }
                     }
                 }
                 //writer.WriteLine(doc.ChildNodes[1].FirstChild.SelectSingleNode("//JX").FirstChild.Value);
