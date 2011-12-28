@@ -368,6 +368,8 @@ namespace WordsssDB
             }
 
         }
+
+
         //SENSE OPERATION
         public int addSense(string sense_name, int parent_id = 0)
         {
@@ -419,6 +421,7 @@ namespace WordsssDB
         }
 
         //FREQUENCY OPERATION
+
         public int addFrequency(string word_name, int frequency, int frequency2, double frequency3)
         {
             int word_id = getWordId(word_name);
@@ -441,6 +444,36 @@ namespace WordsssDB
                 return -1;
             }
             return frequency_id;
+        }
+
+        // ASSOCIATION OPERATION
+        public int addAssociation(string word_name, int association_type, string word_meaning, string description_cn)
+        {
+            int word_id = getWordId(word_name);
+            if (word_id == -1)
+            {
+                Console.WriteLine("word {0} not fount",word_name);
+                return -1;
+            }
+
+            int association_id = getInsertId("association");
+            string insertAss = string.Format("insert into association values({0},{1},'{2}')",association_id,association_type,description_cn);
+            OdbcCommand command = new OdbcCommand(insertAss, myConnection);
+            if (command.ExecuteNonQuery() == 0)
+            {
+                Console.WriteLine("add association failed");
+                return - 1;
+            }
+
+            int word_association_id = getInsertId("word_association");
+            string insertWordAss = string.Format("insert into word_association values({0},{1},{2},'{3}')",word_association_id,word_id,association_id,word_meaning);
+            command = new OdbcCommand(insertWordAss, myConnection);
+            if (command.ExecuteNonQuery() == 0)
+            {
+                Console.WriteLine("add word_association failed");
+                return -1;
+            }
+            return association_id;
         }
     }
 }
