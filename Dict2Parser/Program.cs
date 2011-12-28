@@ -45,8 +45,8 @@ namespace Dict2Parser
 
         static void Main(string[] args)
         {
-            int MAX_WORD_COUNT = 100;
-            int BEGIN_WORD = 0;//未更新
+            int MAX_WORD_COUNT = 100000;
+            int BEGIN_WORD = 10;//未更新
             XmlDocument doc = new XmlDocument();
             doc.Load("AHD.xml");
             FileStream fs = new FileStream("AHD2.txt", FileMode.Create);
@@ -83,6 +83,7 @@ namespace Dict2Parser
                         word_type = "";
 
                     XmlNodeList jxNodes = jxNode.SelectNodes("基本词义/单词项/跟随注释");
+                    
                     XmlNode yxNode = jxNode.SelectSingleNode("基本词义/单词项/单词原型");
                     
                     if(yxNode != null && yxNode.FirstChild.Value != word_name)
@@ -91,6 +92,11 @@ namespace Dict2Parser
                     {
                         foreach (XmlNode jx in jxNodes)
                         {
+                            if (jx.NextSibling != null && jx.NextSibling.Name == "子解释项")
+                            {
+                            //    Console.WriteLine(jx.NextSibling.FirstChild.Value);
+                                continue;
+                            }
                             int dict_meaning_id = -1;
                             word_paraphase = jx.FirstChild.Value;
                             if (word_paraphase == " ")
