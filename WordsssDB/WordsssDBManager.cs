@@ -198,7 +198,7 @@ namespace WordsssDB
             }
             catch (OdbcException e)
             {
-                throw (e);
+               // throw (e);
                 Console.WriteLine("insert into word_dict error");
             }
             return -1;
@@ -273,7 +273,7 @@ namespace WordsssDB
             }
             catch (OdbcException e)
             {
-                throw (e);
+                //throw (e);
                 Console.WriteLine("insert into {0} error", dict_name);
                 Console.WriteLine(e.Message);
                 return -1;
