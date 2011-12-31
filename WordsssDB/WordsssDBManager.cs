@@ -220,7 +220,7 @@ namespace WordsssDB
             return word_dict_idList;
         }
 
-        private int addDictWord(string dict_name,int type,int word_dict_id)
+        public int addDictWord(string dict_name,int type,int word_dict_id)
         {
             int dict_word_id = getInsertId(dict_name + "_word"); 
 
@@ -281,6 +281,40 @@ namespace WordsssDB
             }
             return new_dict_meaning_id;
         }
+
+        public int addParaphaseAhd(int dict_word_id, string meaning_cn, string meaning_en)
+        {
+           /// ADD Paraphase IN DICT_WORD GET DICT_WORD_ID
+         
+            if (dict_word_id == -1)
+                return -1;
+
+            OdbcCommand myCommand;
+            // INSET NEW PARAPHASE INTO SPECIFIED DICT
+            string dict_name = "ahd_dict";
+            int new_dict_meaning_id = getInsertId(dict_name + "_meaning");
+
+            string insertParaphase = String.Format("insert into {0}_meaning values({1},{2},'{3}','{4}')"
+                                                    , dict_name, new_dict_meaning_id, dict_word_id, meaning_en, meaning_cn);
+            myCommand = new OdbcCommand(insertParaphase, myConnection);
+            try
+            {
+                if (myCommand.ExecuteNonQuery() != 1)
+                {
+                    return -1;
+                }
+            }
+            catch (OdbcException e)
+            {
+                //throw (e);
+                Console.WriteLine("insert into {0} error", dict_name);
+                Console.WriteLine(e.Message);
+                return -1;
+
+            }
+            return new_dict_meaning_id;
+        }
+
 
         public IEnumerable<string> getParaphase(string word_name, int dict_type)
         {
@@ -441,6 +475,40 @@ namespace WordsssDB
                 return -1;
             }
             return frequency_id;
+        }
+
+        public int addDictWord2(string word_name, int type)
+        {
+            int word_id = getWordId(word_name);
+            if (word_id == -1)
+                return -1;
+            string strQuery = String.Format("select word_dict_id from word_dict where word_id = {0}", word_id);
+            OdbcCommand command = new OdbcCommand(strQuery,myConnection);
+            OdbcDataReader reader = command.ExecuteReader();
+             int word_dict_id = -1;
+            if (reader.Read())
+            {
+               word_dict_id = reader.GetInt32(0);
+            }
+            else
+            {
+                word_dict_id = getInsertId("word_dict");
+                string strInsert = String.Format("insert into word_dict values({0},{1})",word_dict_id,word_id);
+                command = new OdbcCommand(strInsert,myConnection);
+                if(command.ExecuteNonQuery() == 0)
+                {
+                    return -1;
+                }
+            }
+
+            int dict_word_id = getInsertId("ahd_dict_word");
+            string strInsertDictWord = String.Format("insert into ahd_dict_word values({0},{1},{2})",dict_word_id,type,word_dict_id);
+            command = new OdbcCommand(strInsertDictWord,myConnection);
+            if(command.ExecuteNonQuery() == 0)
+            {
+                return -1;      
+            }
+            return dict_word_id;
         }
     }
 }
