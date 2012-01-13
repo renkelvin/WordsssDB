@@ -23,6 +23,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrequencyParser", "Frequenc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssociationParser", "AssociationParser\AssociationParser.csproj", "{67E8A557-4A07-401C-B18D-2EA7458FAB60}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConversionParser", "ConversionParser\ConversionParser.csproj", "{E89389C2-814A-47DA-8C15-89D20C4D5463}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DerivationParser", "DerivationParser\DerivationParser.csproj", "{9B51E115-7D45-4D1A-916B-B1043E3991F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RootafixParser", "RootafixParser\RootafixParser.csproj", "{23DECE02-5255-4617-BD3C-3FB718FF04E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SynonymParser", "SynonymParser\SynonymParser.csproj", "{789158D9-EB1B-45FE-9CC4-DAB198EF2BC7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RootAfixParser2", "RootAfixParser2\RootAfixParser2.csproj", "{56A6D060-20F9-4BD3-8CBD-DDC76B730E35}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -61,6 +71,26 @@ Global
 		{67E8A557-4A07-401C-B18D-2EA7458FAB60}.Debug|x86.Build.0 = Debug|x86
 		{67E8A557-4A07-401C-B18D-2EA7458FAB60}.Release|x86.ActiveCfg = Release|x86
 		{67E8A557-4A07-401C-B18D-2EA7458FAB60}.Release|x86.Build.0 = Release|x86
+		{E89389C2-814A-47DA-8C15-89D20C4D5463}.Debug|x86.ActiveCfg = Debug|x86
+		{E89389C2-814A-47DA-8C15-89D20C4D5463}.Debug|x86.Build.0 = Debug|x86
+		{E89389C2-814A-47DA-8C15-89D20C4D5463}.Release|x86.ActiveCfg = Release|x86
+		{E89389C2-814A-47DA-8C15-89D20C4D5463}.Release|x86.Build.0 = Release|x86
+		{9B51E115-7D45-4D1A-916B-B1043E3991F0}.Debug|x86.ActiveCfg = Debug|x86
+		{9B51E115-7D45-4D1A-916B-B1043E3991F0}.Debug|x86.Build.0 = Debug|x86
+		{9B51E115-7D45-4D1A-916B-B1043E3991F0}.Release|x86.ActiveCfg = Release|x86
+		{9B51E115-7D45-4D1A-916B-B1043E3991F0}.Release|x86.Build.0 = Release|x86
+		{23DECE02-5255-4617-BD3C-3FB718FF04E2}.Debug|x86.ActiveCfg = Debug|x86
+		{23DECE02-5255-4617-BD3C-3FB718FF04E2}.Debug|x86.Build.0 = Debug|x86
+		{23DECE02-5255-4617-BD3C-3FB718FF04E2}.Release|x86.ActiveCfg = Release|x86
+		{23DECE02-5255-4617-BD3C-3FB718FF04E2}.Release|x86.Build.0 = Release|x86
+		{789158D9-EB1B-45FE-9CC4-DAB198EF2BC7}.Debug|x86.ActiveCfg = Debug|x86
+		{789158D9-EB1B-45FE-9CC4-DAB198EF2BC7}.Debug|x86.Build.0 = Debug|x86
+		{789158D9-EB1B-45FE-9CC4-DAB198EF2BC7}.Release|x86.ActiveCfg = Release|x86
+		{789158D9-EB1B-45FE-9CC4-DAB198EF2BC7}.Release|x86.Build.0 = Release|x86
+		{56A6D060-20F9-4BD3-8CBD-DDC76B730E35}.Debug|x86.ActiveCfg = Debug|x86
+		{56A6D060-20F9-4BD3-8CBD-DDC76B730E35}.Debug|x86.Build.0 = Debug|x86
+		{56A6D060-20F9-4BD3-8CBD-DDC76B730E35}.Release|x86.ActiveCfg = Release|x86
+		{56A6D060-20F9-4BD3-8CBD-DDC76B730E35}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

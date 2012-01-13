@@ -475,5 +475,143 @@ namespace WordsssDB
             }
             return association_id;
         }
+
+        //CONVERSION
+        public int addConversion(string word_name, string conversion_name)
+        {
+            int word_id = getWordId(word_name);
+            if (word_id == -1)
+            {
+                word_id = addWord(word_name);
+            }
+
+            int conversion_id = getWordId(conversion_name);
+            if (conversion_id == -1)
+            {
+                conversion_id = addWord(conversion_name);
+            }
+
+            if (conversion_id == -1 || word_id == -1)
+            {
+                return -1;
+            }
+            int word_conversion_id = getInsertId("word_conversion");
+            string strInsert = String.Format("insert into word_conversion values({0},{1},{2})",word_conversion_id,word_id,conversion_id);
+            OdbcCommand command = new OdbcCommand(strInsert, myConnection);
+            if (command.ExecuteNonQuery() == 0)
+            {
+                return -1;
+            }
+            else
+                return word_conversion_id;
+        }
+
+        public int addDerivation(string word_name, string derivation_name)
+        {
+            int word_id = getWordId(word_name);
+            if (word_id == -1)
+            {
+                word_id = addWord(word_name);
+            }
+
+            int derivation_id = getWordId(derivation_name);
+            if (derivation_id == -1)
+            {
+                derivation_id = addWord(derivation_name);
+            }
+            if (word_id == -1 || derivation_id == -1)
+            {
+                return -1;
+            }
+            int word_derivation_id = getInsertId("word_derivation");
+            string strInsert = String.Format("insert into word_derivation values({0},{1},{2})",word_derivation_id,word_id,derivation_id);
+            OdbcCommand command = new OdbcCommand(strInsert, myConnection);
+            if (command.ExecuteNonQuery() == 0)
+            {
+                return -1;
+            }
+            else
+                return word_derivation_id;
+        }
+
+        public int addSynonym(string word_name, string word_synonym)
+        {
+            int word_name_id = getWordId(word_name);
+            int word_synonym_id = getWordId(word_synonym);
+            if (word_name_id == -1||word_synonym_id == -1)
+            {
+                return -1;
+            }
+
+            int synonym_id = getInsertId("synonym");
+            string strInsert = String.Format("insert into synonym values({0},{1},{2})", synonym_id, word_name_id, word_synonym_id);
+            OdbcCommand command = new OdbcCommand(strInsert, myConnection);
+            if (command.ExecuteNonQuery() == 0)
+            {
+                return -1;
+            }
+            else {
+                return synonym_id;
+            }
+        }
+
+        public int addAntonym(string word_name, string word_antonym)
+        {
+            int word_name_id = getWordId(word_name);
+            int word_antonym_id = getWordId(word_antonym);
+            if (word_name_id == -1 || word_antonym_id == -1)
+            {
+                return -1;
+            }
+
+            int antonym_id = getInsertId("antonym");
+            string strInsert = String.Format("insert into antonym values({0},{1},{2})", antonym_id, word_name_id, word_antonym_id);
+            OdbcCommand command = new OdbcCommand(strInsert, myConnection);
+            if (command.ExecuteNonQuery() == 0)
+            {
+                return -1;
+            }
+            else
+            {
+                return antonym_id;
+            }
+        }
+
+        public int addRootaffix(string phrase, string deformation, string meaning_cn, string meaning_en)
+        {
+            int rootaffix_id = getInsertId("rootaffix");
+            if (rootaffix_id == -1)
+            {
+                return -1;
+            }
+
+            string strInsert = String.Format("insert into rootaffix(rootaffix_id,phrase,deformation,meaning_cn,meaning_en)values({0},'{1}','{2}','{3}','{4}')",
+                                                    rootaffix_id, phrase, deformation, meaning_cn, meaning_en);
+            OdbcCommand command = new OdbcCommand(strInsert, myConnection);
+            if (command.ExecuteNonQuery() == 0)
+            {
+                return -1;
+            }
+            return rootaffix_id;
+        }
+
+        public int addWordRootaffix(string word_name, string word_meaning, string word_equation,int rootaffix_id)
+        {
+            int word_id = getWordId(word_name);
+            if (word_id == -1)
+                return -1;
+
+            int word_rootaffix_id = getInsertId("word_rootaffix");
+            string strInsert = String.Format("insert into word_rootaffix values({0},{1},{2},'{3}','{4}')",
+                                        word_rootaffix_id, rootaffix_id, word_id, word_meaning, word_equation);
+
+            OdbcCommand command = new OdbcCommand(strInsert, myConnection);
+            if (command.ExecuteNonQuery() == 0)
+            {
+                return -1;
+            }
+            return word_rootaffix_id;
+        }
+
     }
 }

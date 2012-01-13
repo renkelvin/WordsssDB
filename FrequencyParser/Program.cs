@@ -33,7 +33,7 @@ namespace FrequencyParser
 
             int i = 0;
             bool bAddWord = false;
-            Regex pattern = new Regex("^[a-z]");
+            Regex pattern = new Regex("^[a-zA-Z]");
             HashSet<string> strHash = new HashSet<string>();
             Dictionary<string, Frequency> strDict = new Dictionary<string, Frequency>();
             while (!reader.EndOfStream)
@@ -44,13 +44,12 @@ namespace FrequencyParser
                 int frequency = int.Parse(splitLine[3]);
                 int frequency2 = int.Parse(splitLine[4]);
                 double frequency3 = double.Parse(splitLine[5]);
-                if (frequency == 0 && bAddWord == false)
-                    continue;
                 if (frequency == 0 && splitLine[2] == ":")
                 {
                     bAddWord = false;
                     continue;
                 }
+
                 string str;
                 if (splitLine[2] == "%" && frequency != 0)
                 {
@@ -61,6 +60,7 @@ namespace FrequencyParser
                 {
                     bAddWord = false;
                 }
+
                 if (splitLine[0] == "@")
                     str = splitLine[2];
                 else
@@ -69,17 +69,16 @@ namespace FrequencyParser
                 if (!pattern.IsMatch(str))
                     continue;
 
-                if (i ++ > 0 )
+                if (bAddWord == false && splitLine[2] != ":")
+                    continue;
+                if (!strHash.Contains(str))
                 {
-                    if (!strHash.Contains(str))
-                    {
-                        strHash.Add(str);
-                        strDict.Add(str, new Frequency(frequency, frequency2, frequency3));
-                    }
-                    else
-                    {
-                        strDict[str].frequency1 += frequency;
-                    }
+                    strHash.Add(str);
+                    strDict.Add(str, new Frequency(frequency, frequency2, frequency3));
+                }
+                else
+                {
+                    strDict[str].frequency1 += frequency;
                 }
                 //      Console.WriteLine(manager.addFrequency(current, currentFrequency, currentFrequency2, frequency3));
             }
@@ -93,8 +92,8 @@ namespace FrequencyParser
                 //if (str.Contains('\''))
                 //{
                     string strRep = str.Replace("'", "''");
-                    if (strDict[str].frequency1 == 0)
-                    {    //  manager.addFrequency(strRep, strDict[str].frequency1, strDict[str].frequency2, strDict[str].frequency3);
+                   // if (strDict[str].frequency1 == 0)
+                   // {    //  manager.addFrequency(strRep, strDict[str].frequency1, strDict[str].frequency2, strDict[str].frequency3);
 
                         if (manager.addFrequency(strRep, strDict[str].frequency1, strDict[str].frequency2, strDict[str].frequency3) == -1)
                         {
@@ -104,9 +103,8 @@ namespace FrequencyParser
                         writer.WriteLine(str + " " + strDict[str].frequency1 + "," + strDict[str].frequency2 + "," + strDict[str].frequency3);
                         //}
                         j++;
-                    }
+                    //}
             }
-            writer.WriteLine(i);
             writer.WriteLine(strHash.Count());
             writer.WriteLine(j);
             manager.CloseManager();
