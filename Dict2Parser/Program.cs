@@ -85,17 +85,26 @@ namespace Dict2Parser
                     XmlNodeList jxNodes = jxNode.SelectNodes("基本词义/单词项/跟随注释");
                     
                     XmlNode yxNode = jxNode.SelectSingleNode("基本词义/单词项/单词原型");
-                    
+
+                    int dict_word_id = manager.addDictWord2(word_name,getWordType(word_type));
+
                     if(yxNode != null && yxNode.FirstChild.Value != word_name)
                         writer.WriteLine(processString(yxNode.FirstChild.Value));
+                    bool isParent = true;
                     if (jxNodes != null)
                     {
                         foreach (XmlNode jx in jxNodes)
                         {
-                            if (jx.NextSibling != null && jx.NextSibling.Name == "子解释项")
+                            if (jx.NextSibling != null && jx.NextSibling.Name == "子解释项" && isParent == true)
                             {
-                            //    Console.WriteLine(jx.NextSibling.FirstChild.Value);
+                                Console.WriteLine(jx.NextSibling.FirstChild.Name);
+                               // Console.WriteLine(jx.NextSibling.FirstChild.Value);
+                                isParent = false;
                                 continue;
+                            }
+                            else if (jx.NextSibling != null && jx.NextSibling.Name != "子解释项")
+                            {
+                                isParent = true;
                             }
                             int dict_meaning_id = -1;
                             word_paraphase = jx.FirstChild.Value;
@@ -109,7 +118,7 @@ namespace Dict2Parser
                             writer.WriteLine(processString(word_paraphase));
 
 
-                            dict_meaning_id = manager.addParaphase("ahd_dict",word_name,meaning_cn,meaning_en,getWordType(word_type));
+                            dict_meaning_id = manager.addParaphaseAhd(dict_word_id,meaning_cn,meaning_en);
                             if (dict_meaning_id == -1)
                             {
                                 writer.WriteLine("MEANING_FAILED");
