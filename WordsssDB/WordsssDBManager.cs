@@ -480,7 +480,7 @@ namespace WordsssDB
             return frequency_id;
         }
 
-<<<<<<< HEAD
+
         // ASSOCIATION OPERATION
         public int addAssociation(string word_name, int association_type, string word_meaning, string description_cn)
         {
@@ -648,7 +648,6 @@ namespace WordsssDB
             return word_rootaffix_id;
         }
 
-=======
         public int addDictWord2(string word_name, int type)
         {
             int word_id = getWordId(word_name);
@@ -682,6 +681,235 @@ namespace WordsssDB
             }
             return dict_word_id;
         }
->>>>>>> 9b3efb03f14da1b29daec237450b4dc9e0bf5fd8
+        //WORD_LIST
+        public int addWordList(int word_id)
+        {
+            string strQuery = string.Format("select word_list_id from word_list where word_id = {0}",word_id);
+            OdbcCommand command = new OdbcCommand(strQuery, myConnection);
+            OdbcDataReader reader = command.ExecuteReader();
+            int word_list_id = -1;
+            if (reader.Read())
+            {
+                word_list_id = reader.GetInt32(0);
+            }
+            else {
+                word_list_id = -1;
+            }
+
+            if (word_list_id != -1)
+                return word_list_id;
+
+            word_list_id = getInsertId("word_list");
+            if (word_list_id == -1)
+                return -1;
+
+            string strInsert = string.Format("insert into word_list values({0},{1})", word_list_id, word_id);
+            command = new OdbcCommand(strInsert, myConnection);
+            if (command.ExecuteNonQuery() == 0)
+                return -1;
+
+            return word_list_id;
+        }
+        //LIST
+        public int addCsListWord(string word_name, string full_name, string meaning)
+        {
+            int word_id = getWordId(word_name);
+            if (word_id == -1)
+            {
+                return -1;
+            }
+
+            int word_list_id = addWordList(word_id);
+            if (word_list_id == -1)
+                return -1;
+
+            int cs_list_word_id = getInsertId("cs_list_word");
+            string strInsertCs = String.Format("insert into cs_list_word values({0},{1},'{2}','{3}')",
+                                                cs_list_word_id,word_list_id,meaning,full_name);
+            OdbcCommand command = new OdbcCommand(strInsertCs, myConnection);
+            if (command.ExecuteNonQuery() == 0)
+            {
+                return -1;
+            }
+
+            return cs_list_word_id;
+        }
+
+        public int addWlListWord(string word_name, string word_meaning)
+        {
+            int word_id = getWordId(word_name);
+            if (word_id == -1)
+            {
+                return -1;
+            }
+
+            int word_list_id = addWordList(word_id);
+            if (word_list_id == -1)
+                return -1;
+
+            int physics_list_word_id = getInsertId("ph_list_word");
+            string strInsertPhysics = String.Format("insert into ph_list_word values({0},'{1}',{2})",
+                                                physics_list_word_id, word_meaning, word_list_id);
+            OdbcCommand command = new OdbcCommand(strInsertPhysics, myConnection);
+            if (command.ExecuteNonQuery() == 0)
+            {
+                return -1;
+            }
+
+            return physics_list_word_id;
+        }
+
+        public int addMaListWord(string word_name, string word_meaning)
+        {
+            int word_id = getWordId(word_name);
+            if (word_id == -1)
+            {
+                    return -1;
+            }
+
+            int word_list_id = addWordList(word_id);
+            if (word_list_id == -1)
+                return -1;
+
+            int math_list_word_id = getInsertId("ma_list_word");
+            string strInsertMath = String.Format("insert into ma_list_word values({0},'{1}',{2})",
+                                                math_list_word_id, word_meaning, word_list_id);
+            OdbcCommand command = new OdbcCommand(strInsertMath, myConnection);
+            if (command.ExecuteNonQuery() == 0)
+            {
+                return -1;
+            }
+
+            return math_list_word_id;
+        }
+
+        //MWC   
+        public int addMWCDictWord(string word_name,
+                                  string function,
+                                  string date,
+                                  string etymology,
+                                  string inflect)
+        {
+            int word_id = getWordId(word_name);
+            if (word_id == -1)
+                return -1;
+
+            string strQuery = String.Format("select word_dict_id from word_dict where word_id = {0}", word_id);
+            OdbcCommand command = new OdbcCommand(strQuery, myConnection);
+            OdbcDataReader reader = command.ExecuteReader();
+            int word_dict_id = -1;
+            if (reader.Read())
+            {
+                word_dict_id = reader.GetInt32(0);
+            }
+            else
+            {
+                word_dict_id = getInsertId("word_dict");
+                string strInsert = String.Format("insert into word_dict values({0},{1})", word_dict_id, word_id);
+                command = new OdbcCommand(strInsert, myConnection);
+                if (command.ExecuteNonQuery() == 0)
+                {
+                    return -1;
+                }
+            }
+
+            function = function.Replace("'", "''");
+            etymology = etymology.Replace("'", "''"); 
+            date = date.Replace("'", "''"); 
+            inflect = inflect.Replace("'", "''");
+            int dict_word_id = getInsertId("mwc_dict_word");
+            string strInsertDictWord = String.Format("insert into mwc_dict_word values({0},'{1}','{2}','{3}','{4}',{5})"
+                                                , dict_word_id, function, etymology, inflect, date, word_dict_id);
+
+            try
+            {
+                command = new OdbcCommand(strInsertDictWord, myConnection);
+                if (command.ExecuteNonQuery() == 0)
+                {
+                    return -1;
+                }
+            }
+            catch (OdbcException e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine("==>" + word_name);
+            }
+            return dict_word_id;
+        }
+
+        public int addMWCMeaning(int dict_word_id, string meaning)
+        {
+            if (dict_word_id == -1)
+                return -1;
+            int mwc_dict_meaning_id = getInsertId("mwc_dict_meaning");
+
+            if (mwc_dict_meaning_id == -1)
+                return -1;
+
+            meaning = meaning.Replace("'", "''");
+            string strInsert = string.Format("insert into mwc_dict_meaning values({0},'{1}',{2})",
+                                            mwc_dict_meaning_id,meaning, dict_word_id);
+            try
+            {
+                OdbcCommand command = new OdbcCommand(strInsert, myConnection);
+                if (command.ExecuteNonQuery() == 0)
+                    return -1;
+            }
+            catch (OdbcException e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(meaning);
+            }
+            return mwc_dict_meaning_id;
+        }
+
+        //GRE
+        public int addGREListWord(string word_name, string word_meaning)
+        {
+            int word_id = getWordId(word_name);
+            if (word_id == -1)
+                return -1;
+
+            int word_list_id = addWordList(word_id);
+            if (word_list_id == -1)
+                return -1;
+
+            int gre_list_word_id = getInsertId("gre_list_word");
+
+            word_meaning = word_meaning.Replace("'", "''");
+            string strInsert = string.Format("insert into gre_list_word values({0},'{1}',{2})", gre_list_word_id, word_meaning, word_list_id);
+            OdbcCommand command = new OdbcCommand(strInsert, myConnection);
+            if (command.ExecuteNonQuery() == 0)
+            {
+                return -1;
+            }
+
+            return gre_list_word_id;
+        }
+
+        public int addGREListMemory(string type, string description, int gre_list_word_id)
+        {
+            int gre_list_memory_id = getInsertId("gre_list_memory");
+
+            if (gre_list_memory_id == -1)
+                return -1;
+
+            if (gre_list_word_id == -1)
+                return -1;
+
+            description = description.Replace("'", "''");
+            string strInsert = string.Format("insert into gre_list_memory values({0},'{1}',{2},'{3}')"
+                                                ,gre_list_memory_id,
+                                                description,
+                                                gre_list_word_id,
+                                                type
+                                                );
+            OdbcCommand command = new OdbcCommand(strInsert, myConnection);
+            if (command.ExecuteNonQuery() == 0)
+            {
+                return -1;
+            }
+            return gre_list_memory_id;
+        }
     }
 }

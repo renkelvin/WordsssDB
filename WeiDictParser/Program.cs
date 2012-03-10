@@ -3,76 +3,164 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using HtmlAgilityPack;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace WeiDictParser
 {
     class Program
     {
-        public static string ConvertString(string str)
-        {
-            string result = str;
-            result = result.Replace("&nbsp", "\r\n");
-            result = result.Replace("&gt;", ">");
-            result = result.Replace("&lt;", "<");
-           /* result = result.Replace("\r\n", " ");
-            result = result.Replace("1 :","\n1:");
-            result = result.Replace("2 :", "\n2:");
-            result = result.Replace("3 :", "\n3:");
-            result = result.Replace("4 :", "\n4:");
-            result = result.Replace("5 :", "\n5:");
-            result = result.Replace("6 :", "\n6:");
-            result = result.Replace("7 :", "\n7:");
-            result = result.Replace("8 :", "\n8:");
-            result = result.Replace("9 :", "\n9:");
-         */   return result;
-        }
         static void Main(string[] args)
         {
-            HtmlDocument doc = new HtmlDocument();
-            doc.Load("weitest.htm",Encoding.GetEncoding("gb2312"));
-            
-            HtmlNodeCollection pNodeList = doc.DocumentNode.SelectNodes("//body/div/p/b/span");
-            
-            HtmlNodeCollection meanNodeList = 
-               doc.DocumentNode.SelectNodes("//p[@style='text-align:left;line-height:14.4pt']|//p[@style='line-height:14.4pt']");
-            
-            FileStream fs = new FileStream("text.txt",FileMode.Create);
+            FileStream fs = new FileStream("MWC.txt",FileMode.Open);
 
-            StreamWriter writer = new StreamWriter(fs, Encoding.GetEncoding("gb2312"));
-            
-            
-            WordsssDB.WordsssDBManager manager = new WordsssDB.WordsssDBManager();
-            
-            int i = 0;
-            foreach (HtmlNode node in pNodeList)
-            {
-                if (node.InnerText == "'" || node.InnerText == ": ")
-                {
-                    continue;
-                }
-                string word_name = node.InnerText;
-                word_name = word_name.Replace("·", "");
-                word_name = word_name.Replace("'", "''");
-
-              
-                if (i < meanNodeList.Count())
-                {
-                    string meaning = meanNodeList[i++].InnerText;
-                    meaning = meaning.Replace("'", "''");
-                    meaning = ConvertString(meaning);
-
-                    Console.WriteLine(manager.addParaphase("mwc_dict", word_name, meaning, null));
-                    writer.WriteLine("{0}==>{1}", word_name,i);
-                    writer.WriteLine(meaning);
-    
-                }
-
+            StreamReader reader = new StreamReader(fs);
            
+            FileStream fw = new FileStream("result.txt",FileMode.Create);
+            StreamWriter writer = new StreamWriter(fw);
+
+            FileStream ferror = new FileStream("error_3_1.txt", FileMode.Create);
+            StreamWriter error_writer = new StreamWriter(ferror);
+
+            MWCMatcher matcher = new MWCMatcher();
+            string strLine="";
+            int currentIndex = 0;
+            WordsssDB.WordsssDBManager manager = new WordsssDB.WordsssDBManager();
+
+            
+            while (!reader.EndOfStream)
+            {
+                strLine = reader.ReadLine();
+                if (strLine != "")
+                    matcher.matchLine(strLine);
+                if (matcher.isComplete)
+                {
+                    writer.WriteLine(matcher.word_name);
+                    writer.WriteLine("Function: " + matcher.function);
+                    writer.WriteLine("InflectForm: " + matcher.inflectform);
+                    writer.WriteLine("Date: " + matcher.date);
+                    writer.WriteLine("Etymology: " + matcher.etymology);
+                    writer.WriteLine("Definition:");
+                    int dict_word_id = -1;
+                  
+                    if ((dict_word_id = manager.addMWCDictWord(matcher.word_name, matcher.function, matcher.date, matcher.etymology, matcher.inflectform)) == -1)
+                    {
+                        error_writer.WriteLine(matcher.word_name);
+                    }
+                    int count = matcher.defList.Count;
+                    if (matcher.defList.Count > 1)
+                    {
+                        for (int i = 1; i <= matcher.defList.Count; i++)
+                        {
+                            writer.WriteLine(i + " " + matcher.defList[i - 1]);
+                            if (manager.addMWCMeaning(dict_word_id, matcher.defList[i - 1]) == -1)
+                            {
+                                error_writer.WriteLine("<" + matcher.word_name + ">" + matcher.defList[i - 1]);
+                            }
+                        }
+                    }
+                    else if (matcher.defList.Count == 1)
+                    {
+                        writer.WriteLine(matcher.defList[0]);
+                        if (manager.addMWCMeaning(dict_word_id, matcher.defList[0]) == -1)
+                        {
+                            error_writer.WriteLine("<" + matcher.word_name + ">" + matcher.defList[0]);
+                        }
+                    }
+                    currentIndex++;
+                    if(currentIndex % 1000 == 0)
+                    Console.WriteLine(currentIndex);
+
+                    matcher = new MWCMatcher();
+                    if (count > 1)
+                        matcher.matchLine(strLine);
+                }
+                else if (matcher.isTransitive)
+                {
+                    writer.WriteLine(matcher.word_name);
+                    writer.WriteLine("Function: " + matcher.function);
+                    writer.WriteLine("InflectForm: " + matcher.inflectform);
+                    writer.WriteLine("Date: " + matcher.date);
+                    writer.WriteLine("Etymology: " + matcher.etymology);
+                    writer.WriteLine("Definition:");
+                    int dict_word_id = -1;
+                    if ((dict_word_id = manager.addMWCDictWord(matcher.word_name, matcher.function, matcher.date, matcher.etymology, matcher.inflectform)) == -1)
+                    {
+                        error_writer.WriteLine(matcher.word_name);
+                    }
+                    if (matcher.defList.Count > 1)
+                    {
+                        for (int i = 1; i <= matcher.defList.Count; i++)
+                        {
+                            writer.WriteLine(i + " " + matcher.defList[i - 1]);
+                            if (manager.addMWCMeaning(dict_word_id, matcher.defList[i - 1]) == -1)
+                              {
+                                  error_writer.WriteLine("<" + matcher.word_name + ">" + matcher.defList[i - 1]);
+                              }
+                        }
+                        matcher.defList.Clear();
+                        matcher.matchLine(strLine);
+                    }
+                    else if (matcher.defList.Count == 1)
+                    {
+                        writer.WriteLine(matcher.defList[0]);
+                        if (manager.addMWCMeaning(dict_word_id, matcher.defList[0]) == -1)
+                        {
+                            error_writer.WriteLine("<" + matcher.word_name + ">" + matcher.defList[0]);
+                        }
+                        matcher.defList.Clear();
+                        if (matcher.isNeedRead)
+                            matcher.matchLine(strLine);
+                    }
+                    currentIndex++;
+                    if (currentIndex % 1000 == 0)
+                        Console.WriteLine(currentIndex);
+                }
+                else if (matcher.isIntransitive)
+                {
+                    writer.WriteLine(matcher.word_name);
+                    writer.WriteLine("Function: " + matcher.function);
+                    writer.WriteLine("InflectForm: " + matcher.inflectform);
+                    writer.WriteLine("Date: " + matcher.date);
+                    writer.WriteLine("Etymology: " + matcher.etymology);
+                    writer.WriteLine("Definition:");
+                    int dict_word_id = -1;
+                    if ((dict_word_id = manager.addMWCDictWord(matcher.word_name, matcher.function, matcher.date, matcher.etymology, matcher.inflectform)) == -1)
+                    {
+                        error_writer.WriteLine(matcher.word_name);
+                    }
+                    if (matcher.defList.Count > 1)
+                    {
+                        for (int i = 1; i <= matcher.defList.Count; i++)
+                        {
+                            writer.WriteLine(i + " " + matcher.defList[i - 1]);
+                            if (manager.addMWCMeaning(dict_word_id, matcher.defList[i - 1]) == -1)
+                              {
+                                  error_writer.WriteLine("<" + matcher.word_name + ">" + matcher.defList[i - 1]);
+                              }
+                        }
+                        matcher.defList.Clear();
+                        matcher.matchLine(strLine);
+                    }
+                    else if (matcher.defList.Count == 1)
+                    {
+                        writer.WriteLine(matcher.defList[0]);
+                        
+                        if (manager.addMWCMeaning(dict_word_id, matcher.defList[0]) == -1)
+                        {
+                            error_writer.WriteLine("<" + matcher.word_name + ">" + matcher.defList[0]);
+                        }
+                        matcher.defList.Clear();
+                        if (matcher.isNeedRead)
+                            matcher.matchLine(strLine);
+                    }
+                    currentIndex++;
+                    if (currentIndex % 1000 == 0)
+                        Console.WriteLine(currentIndex);
+                }
+                
             }
-            Console.WriteLine(pNodeList.Count(node=>node.InnerText != "'" && node.InnerText != ": "));
-            Console.WriteLine(meanNodeList.Count());
+            error_writer.Close();
             writer.Close();
             
         }

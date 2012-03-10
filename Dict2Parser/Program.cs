@@ -51,7 +51,7 @@ namespace Dict2Parser
             doc.Load("AHD.xml");
             FileStream fs = new FileStream("AHD2.txt", FileMode.Create);
             StreamWriter writer = new StreamWriter(fs);
-            WordsssDBManager manager = new WordsssDBManager();
+            WordsssDB.WordsssDBManager manager = new WordsssDBManager();
 
             XmlNode dictNode = doc.ChildNodes[1];
             Console.WriteLine(dictNode.ChildNodes.Count);
@@ -87,7 +87,7 @@ namespace Dict2Parser
                     XmlNode yxNode = jxNode.SelectSingleNode("基本词义/单词项/单词原型");
 
                     int dict_word_id = manager.addDictWord2(word_name,getWordType(word_type));
-
+                    
                     if(yxNode != null && yxNode.FirstChild.Value != word_name)
                         writer.WriteLine(processString(yxNode.FirstChild.Value));
                     bool isParent = true;

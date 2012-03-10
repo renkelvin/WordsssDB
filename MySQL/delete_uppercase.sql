@@ -1,0 +1,1 @@
+delete from word.word where word_name regexp binary'^[A-Z]';

@@ -33,6 +33,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SynonymParser", "SynonymPar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RootAfixParser2", "RootAfixParser2\RootAfixParser2.csproj", "{56A6D060-20F9-4BD3-8CBD-DDC76B730E35}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSParser", "CSParser\CSParser.csproj", "{45082EC4-20F1-43B0-8D5F-B566E9D20107}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WLParser", "WLParser\WLParser.csproj", "{3FE1744C-DE0D-4BE6-BFB0-34A4706B05BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAParser", "MAParser\MAParser.csproj", "{A21F94CB-E47F-430A-8E57-7BF3239023E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GREParser", "GREParser\GREParser.csproj", "{C6A466CF-64DE-43A7-8C17-EF8804CAC0F9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -91,6 +99,22 @@ Global
 		{56A6D060-20F9-4BD3-8CBD-DDC76B730E35}.Debug|x86.Build.0 = Debug|x86
 		{56A6D060-20F9-4BD3-8CBD-DDC76B730E35}.Release|x86.ActiveCfg = Release|x86
 		{56A6D060-20F9-4BD3-8CBD-DDC76B730E35}.Release|x86.Build.0 = Release|x86
+		{45082EC4-20F1-43B0-8D5F-B566E9D20107}.Debug|x86.ActiveCfg = Debug|x86
+		{45082EC4-20F1-43B0-8D5F-B566E9D20107}.Debug|x86.Build.0 = Debug|x86
+		{45082EC4-20F1-43B0-8D5F-B566E9D20107}.Release|x86.ActiveCfg = Release|x86
+		{45082EC4-20F1-43B0-8D5F-B566E9D20107}.Release|x86.Build.0 = Release|x86
+		{3FE1744C-DE0D-4BE6-BFB0-34A4706B05BF}.Debug|x86.ActiveCfg = Debug|x86
+		{3FE1744C-DE0D-4BE6-BFB0-34A4706B05BF}.Debug|x86.Build.0 = Debug|x86
+		{3FE1744C-DE0D-4BE6-BFB0-34A4706B05BF}.Release|x86.ActiveCfg = Release|x86
+		{3FE1744C-DE0D-4BE6-BFB0-34A4706B05BF}.Release|x86.Build.0 = Release|x86
+		{A21F94CB-E47F-430A-8E57-7BF3239023E9}.Debug|x86.ActiveCfg = Debug|x86
+		{A21F94CB-E47F-430A-8E57-7BF3239023E9}.Debug|x86.Build.0 = Debug|x86
+		{A21F94CB-E47F-430A-8E57-7BF3239023E9}.Release|x86.ActiveCfg = Release|x86
+		{A21F94CB-E47F-430A-8E57-7BF3239023E9}.Release|x86.Build.0 = Release|x86
+		{C6A466CF-64DE-43A7-8C17-EF8804CAC0F9}.Debug|x86.ActiveCfg = Debug|x86
+		{C6A466CF-64DE-43A7-8C17-EF8804CAC0F9}.Debug|x86.Build.0 = Debug|x86
+		{C6A466CF-64DE-43A7-8C17-EF8804CAC0F9}.Release|x86.ActiveCfg = Release|x86
+		{C6A466CF-64DE-43A7-8C17-EF8804CAC0F9}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
