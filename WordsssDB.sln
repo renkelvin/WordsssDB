@@ -41,6 +41,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAParser", "MAParser\MAPars
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GREParser", "GREParser\GREParser.csproj", "{C6A466CF-64DE-43A7-8C17-EF8804CAC0F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundMarkParser", "SoundMarkParser\SoundMarkParser.csproj", "{E8C89C39-8E87-4034-9D7F-46E367E2668A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SRTParser", "SRTParser\SRTParser.csproj", "{4975DF17-DAB4-4F7E-952E-A501C1904557}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -115,6 +119,14 @@ Global
 		{C6A466CF-64DE-43A7-8C17-EF8804CAC0F9}.Debug|x86.Build.0 = Debug|x86
 		{C6A466CF-64DE-43A7-8C17-EF8804CAC0F9}.Release|x86.ActiveCfg = Release|x86
 		{C6A466CF-64DE-43A7-8C17-EF8804CAC0F9}.Release|x86.Build.0 = Release|x86
+		{E8C89C39-8E87-4034-9D7F-46E367E2668A}.Debug|x86.ActiveCfg = Debug|x86
+		{E8C89C39-8E87-4034-9D7F-46E367E2668A}.Debug|x86.Build.0 = Debug|x86
+		{E8C89C39-8E87-4034-9D7F-46E367E2668A}.Release|x86.ActiveCfg = Release|x86
+		{E8C89C39-8E87-4034-9D7F-46E367E2668A}.Release|x86.Build.0 = Release|x86
+		{4975DF17-DAB4-4F7E-952E-A501C1904557}.Debug|x86.ActiveCfg = Debug|x86
+		{4975DF17-DAB4-4F7E-952E-A501C1904557}.Debug|x86.Build.0 = Debug|x86
+		{4975DF17-DAB4-4F7E-952E-A501C1904557}.Release|x86.ActiveCfg = Release|x86
+		{4975DF17-DAB4-4F7E-952E-A501C1904557}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

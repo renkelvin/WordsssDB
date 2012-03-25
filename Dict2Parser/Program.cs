@@ -51,7 +51,7 @@ namespace Dict2Parser
             doc.Load("AHD.xml");
             FileStream fs = new FileStream("AHD2.txt", FileMode.Create);
             StreamWriter writer = new StreamWriter(fs);
-            WordsssDB.WordsssDBManager manager = new WordsssDBManager();
+            //WordsssDB.WordsssDBManager manager = new WordsssDBManager();
 
             XmlNode dictNode = doc.ChildNodes[1];
             Console.WriteLine(dictNode.ChildNodes.Count);
@@ -86,7 +86,7 @@ namespace Dict2Parser
                     
                     XmlNode yxNode = jxNode.SelectSingleNode("基本词义/单词项/单词原型");
 
-                    int dict_word_id = manager.addDictWord2(word_name,getWordType(word_type));
+                    //int dict_word_id = manager.addDictWord2(word_name,getWordType(word_type));
                     
                     if(yxNode != null && yxNode.FirstChild.Value != word_name)
                         writer.WriteLine(processString(yxNode.FirstChild.Value));
@@ -111,14 +111,14 @@ namespace Dict2Parser
                             if (word_paraphase == " ")
                                 continue;
                             //if(manager.addParaphase("mcec_dict", word_name, word_paraphase, word_type)==-1)
-                            writer.WriteLine(getWordType(word_type));
+                            //writer.WriteLine(getWordType(word_type));
                             string meaning_en = processString(jx.PreviousSibling.FirstChild.Value);
                             string meaning_cn = processString(word_paraphase);
                             writer.WriteLine(processString(jx.PreviousSibling.FirstChild.Value));
                             writer.WriteLine(processString(word_paraphase));
 
 
-                            dict_meaning_id = manager.addParaphaseAhd(dict_word_id,meaning_cn,meaning_en);
+                            //dict_meaning_id = manager.addParaphaseAhd(dict_word_id,meaning_cn,meaning_en);
                             if (dict_meaning_id == -1)
                             {
                                 writer.WriteLine("MEANING_FAILED");
@@ -134,8 +134,8 @@ namespace Dict2Parser
                                 {
                                     string sentence_en = processString(lj.FirstChild.Value);
                                     string sentence_cn = processString(lj.NextSibling.FirstChild.Value);
-                                    if (manager.addDictSentence(dict_meaning_id, sentence_en, sentence_cn) == -1)
-                                        writer.WriteLine("SENTENCE_FAILED");
+                                 //   if (manager.addDictSentence(dict_meaning_id, sentence_en, sentence_cn) == -1)
+                                 //       writer.WriteLine("SENTENCE_FAILED");
                                     writer.WriteLine(processString(lj.FirstChild.Value));
                                     writer.WriteLine(processString(lj.NextSibling.FirstChild.Value));
                                 }

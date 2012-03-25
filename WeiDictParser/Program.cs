@@ -13,7 +13,7 @@ namespace WeiDictParser
         static void Main(string[] args)
         {
             FileStream fs = new FileStream("MWC.txt",FileMode.Open);
-
+         
             StreamReader reader = new StreamReader(fs);
            
             FileStream fw = new FileStream("result.txt",FileMode.Create);

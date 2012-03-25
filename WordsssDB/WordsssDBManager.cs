@@ -87,7 +87,7 @@ namespace WordsssDB
             return "can't find word";
         }
 
-        private int getWordId(string word_name)
+        public int getWordId(string word_name)
         {
             string queryWord = String.Format("select word_id from word where binary word_name = '{0}'",word_name);
             OdbcCommand myCommand = new OdbcCommand(queryWord, myConnection);
@@ -911,5 +911,31 @@ namespace WordsssDB
             }
             return gre_list_memory_id;
         }
-    }
+
+        public int updateAHDSound(int word_id, int i_type, string word_sound)
+        {
+            string strQuery = String.Format("select ahd_dict_word_id from word_dict,ahd_dict_word where word_dict.word_id = {0}" +
+                                            " and word_dict.word_dict_id = ahd_dict_word.word_dict_id and type = {1}"
+                                            ,word_id, i_type);
+
+            OdbcCommand command = new OdbcCommand(strQuery, myConnection);
+            OdbcDataReader reader = command.ExecuteReader();
+
+            int ahd_dict_word_id = -1;
+            if (reader.Read())
+            {
+                ahd_dict_word_id = reader.GetInt32(0);
+            }
+            if (ahd_dict_word_id == -1)
+                return -1;
+
+            string strInsert = string.Format("update ahd_dict_word set pronunciation = '{0}' where ahd_dict_word_id = {1}",
+                                                word_sound, ahd_dict_word_id);
+            command = new OdbcCommand(strInsert, myConnection);
+            if (command.ExecuteNonQuery() == 0)
+                return -1;
+            
+            return ahd_dict_word_id;
+        }
+    } 
 }
